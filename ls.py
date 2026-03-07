@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-import argparse
 import os
+import sys
+import argparse
 
+prog = os.path.basename(sys.argv[0])
 options = {
     # Show hidden files (files starts with ".")
     "all": False,
@@ -37,32 +39,32 @@ def option_parsing():
     for key in opt_keys:
         options[key] = args_dict[key]
 
+    return
+
 
 def list_files(pwd):
     items = []
-    ls = os.listdir(pwd)
 
-    for f in ls:
-        if not os.path.exists(pwd + f):
-            print(pwd + f)
-            return
-        if os.path.isdir(pwd + f):
-            items.append(f + "/")
-        else:
-            items.append(f)
+    try:
+        items = os.listdir(pwd)
+        items.sort()
+    except FileNotFoundError:
+        print(f"{prog}: cannot access '{pwd}': No such file or directory")
+        exit(1)
 
-    items.sort()
     return items
 
 
 def main():
+    global options
+
     # pwd = os.getcwd()
-    # pwd = "/home/sharath/"
-    # items = list_files(pwd)
-    # print("\n".join(items))
+    pwd = "~"
     option_parsing()
-    print("Options provided:")
-    print(options)
+    items = list_files(pwd)
+    print("\n".join(items))
+    # print("Options provided:")
+    # print(options)
 
 
 if __name__ == "__main__":
